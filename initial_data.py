@@ -1,9 +1,11 @@
-import sys
-sys.path.append('../')
-from app import db
+from datetime import time
 from app.models import *
-from datetime import time 
+from app import db
+
+
 def insert_init_data():
+    db.drop_all()
+    db.create_all()
     session = db.session
     # должности
     cashier_post = Post(name='Кассир')
@@ -17,19 +19,25 @@ def insert_init_data():
     cashier1 = Staff(
         passport='1111123456',
         name='Лимонов Вадим Захарович',
-        post_id=cashier_post.id
+        post_id=cashier_post.id,
+        login='cashier1',
+        password='cashier1'
     )
 
     cashier2 = Staff(
         passport='1112123456',
         name='Петров Антон Михайлович',
-        post_id=cashier_post.id
+        post_id=cashier_post.id,
+        login='cashier2',
+        password='cashier2'
     )
 
     manager1 = Staff(
         passport='1113123456',
         name='Борисов Николай Сергеевич',
-        post_id=manager_post.id
+        post_id=manager_post.id,
+        login='manager1',
+        password='manager1'
     )
 
     session.add(cashier1)
@@ -75,27 +83,27 @@ def insert_init_data():
     # фильмы
     film1 = Film(
         name='Стерва на выданье',
-        genre_id=genre_drama.id,
-        author_id=author6.id,
+        id_genre=genre_drama.id,
+        id_author=author6.id,
         duration=time(1, 20)
     )
     film2 = Film(
         name='Ачим',
-        genre_id=genre_fantastic.id,
-        author_id=author3.id,
+        id_genre=genre_fantastic.id,
+        id_author=author3.id,
         duration=time(1, 30)
     )
     film3 = Film(
         name='Балерина на стене',
-        genre_id=genre_action.id,
-        author_id=author1.id,
+        id_genre=genre_action.id,
+        id_author=author1.id,
         duration=time(1, 40)
     )
     film4 = Film(
         name='Собаки в чемодане',
-        genre_id=genre_triller.id,
-        author_id=author2.id,
-        duration=time(1, 350)
+        id_genre=genre_triller.id,
+        id_author=author2.id,
+        duration=time(1, 50)
     )
     session.add(film1)
     session.add(film2)

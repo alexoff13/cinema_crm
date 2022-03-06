@@ -1,12 +1,12 @@
 
 from datetime import time
-from unittest import main
 from app import db
 
-# TODO дописать класс билета и добавить подпись кассира
-# TODO sql скрипт для вставки изначальных данных
 # ебучие релайтион шип с back_populates прописываются в двух ебанных классах
-# ссылка на ответ умного чеоловека https://coderoad.ru/39869793/Когда-мне-нужно-использовать-sqlalchemy-back_populates
+# ссылка на ответ умного чеоловека
+# https://coderoad.ru/39869793/Когда-мне-нужно-использовать-sqlalchemy-back_populates
+# пока закомментил связи, потому что не вижу разницы
+
 
 class Film(db.Model):
     """ 
@@ -31,7 +31,9 @@ class Film(db.Model):
         comment='id режиссера'
     )
     duration = db.Column(db.Time, comment='Продолжительность')
-    sessions = db.relationship('FilmSession', back_populates='name_film')
+    # sessions = db.relationship('FilmSession', back_populates='film')
+    # genre = db.relationship('Genre', back_populates='films', uselist=False)
+    # author = db.relationship('Author', back_populates='films', uselist=False)
 
     def __init__(self, name: str, id_genre: int,
                  id_author: int, duration) -> None:
@@ -48,7 +50,7 @@ class Genre(db.Model):
     __tablename__ = 'genre'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, comment='Наименование')
-    films = db.relationship('Film', back_populates='genre')
+    # films = db.relationship('Film', back_populates='genre')
 
     def __init__(self, name: str) -> None:
         self.name = name
@@ -61,7 +63,7 @@ class Author(db.Model):
     __tablename__ = 'author'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, comment='Наименование')
-    films = db.relationship('Film', back_populates='author')
+    # films = db.relationship('Film', back_populates='author')
 
     def __init__(self, name: str) -> None:
         self.name = name
@@ -92,7 +94,10 @@ class FilmSession(db.Model):
         db.ForeignKey('cinemahall.name'),
         comment='Наименование кинозала'
     )
-    tickets = db.relationship('Ticket', back_populates='session_film')
+    # film = db.relationship('Film', back_populates='sessions', uselist=False)
+    # tickets = db.relationship('Ticket', back_populates='session_film')
+    # cinemahall = db.relationship(
+    #     'Cinemahall', back_populates='sessions', uselist=False)
 
 
 class Cinemahall(db.Model):
@@ -112,9 +117,9 @@ class Cinemahall(db.Model):
         comment='Название'
     )
     capacity = db.Column(db.Integer, comment='Вместимость')
-    sessions = db.relationship(
-        'FilmSession',
-        back_populates='cinemahall')
+    # sessions = db.relationship(
+    #     'FilmSession',
+    #     back_populates='cinemahall')
 
 
 class Ticket(db.Model):
@@ -133,6 +138,9 @@ class Ticket(db.Model):
         db.ForeignKey('staff.passport'),
         comment='Подпись кассира'
     )
+    # session_film = db.relationship(
+    #     'FilmSession', back_populates='tickets', uselist=False)
+    # staff = db.relationship('Staff', back_populates='tickets', uselist=False)
 
 
 class Staff(db.Model):
@@ -146,17 +154,34 @@ class Staff(db.Model):
         comment='Серия и номер паспорта'
     )
     name = db.Column(db.String, comment='ФИО')
-    post = db.Column(
+    login = db.Column(db.String)
+    password = db.Column(db.String)
+    post_id = db.Column(
         db.Integer,
         db.ForeignKey('post.id'),
         comment='id дожности'
     )
-    tickets = db.relationship('Ticket', back_populates='staff')
+    # tickets = db.relationship('Ticket', back_populates='staff')
+    # post = db.relationship('Post', back_populates='staff', uselist=False)
 
-    def __init__(self, passport, name, post_id) -> None:
+    def __init__(self, passport, name, post_id, login, password) -> None:
         self.passport = passport
         self.name = name
-        self.post = post_id
+        self.post_id = post_id
+        self.login = login
+        self.password = password
+
+    def is_authenticated(self):
+        return True
+
+    def is_active(self):
+        return True
+
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        return int(self.passport)
 
 
 class Post(db.Model):
@@ -167,112 +192,7 @@ class Post(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, comment='Наименование')
-    staff = db.relationship('Staff', back_populates='post')
+    # staff = db.relationship('Staff', back_populates='post')
 
     def __init__(self, name) -> None:
         self.name = name
-
-
-def insert_init_data():
-    ...
-    # должности
-    # cashier_post = Post(name='Кассир')
-    # db.session.add(cashier_post)
-    # db.session.commit()
-    # manager_post = Post(name='Менеджер')
-
-    # db.session.add(manager_post)
-    # db.session.commit()
-
-    # # сотрудники
-    # cashier1 = Staff(
-    #     passport='1111123456',
-    #     name='Лимонов Вадим Захарович',
-    #     post_id=cashier_post.id
-    # )
-
-    # cashier2 = Staff(
-    #     passport='1112123456',
-    #     name='Петров Антон Михайлович',
-    #     post_id=cashier_post.id
-    # )
-
-    # manager1 = Staff(
-    #     passport='1113123456',
-    #     name='Борисов Николай Сергеевич',
-    #     post_id=manager_post.id
-    # )
-
-    # db.session.add(cashier1)
-    # db.session.add(cashier2)
-    # db.session.add(manager1)
-    # db.session.commit()
-
-    # # жанры
-    # genre_comedy = Genre(name='Комедия')
-    # genre_triller = Genre(name='Триллер')
-    # genre_drama = Genre(name='Драма')
-    # genre_action = Genre(name='Боевик')
-    # genre_tragedy = Genre(name='Трагедия')
-    # genre_fantastic = Genre(name='Фантастика')
-    # genre_musical = Genre(name='Мюзикл')
-    # genre_melodrama = Genre(name='Мелодрама')
-
-    # db.session.add(genre_comedy)
-    # db.session.add(genre_triller)
-    # db.session.add(genre_drama)
-    # db.session.add(genre_action)
-    # db.session.add(genre_tragedy)
-    # db.session.add(genre_fantastic)
-    # db.session.add(genre_musical)
-    # db.session.add(genre_melodrama)
-    # db.session.commit()
-
-    # # авторы
-    # author1 = Author(name='Кислотов Евгений Михайлович')
-    # author2 = Author(name='Гаврилов Петр Афанасьевич')
-    # author3 = Author(name='Изотов Даниил Андреевич')
-    # author4 = Author(name='Петренко Максим Федорович')
-    # author5 = Author(name='Левочкин Илья Максимович')
-    # author6 = Author(name='Андреева Елизавета Петровна')
-    # db.session.add(author1)
-    # db.session.add(author2)
-    # db.session.add(author3)
-    # db.session.add(author4)
-    # db.session.add(author5)
-    # db.session.add(author6)
-    # db.session.commit()
-
-    # # фильмы
-    # film1 = Film(
-    #     name='Стерва на выданье',
-    #     genre_id=genre_drama.id,
-    #     author_id=author6.id,
-    #     duration=time(1, 20)
-    # )
-    # film2 = Film(
-    #     name='Ачим',
-    #     genre_id=genre_fantastic.id,
-    #     author_id=author3.id,
-    #     duration=time(1, 30)
-    # )
-    # film3 = Film(
-    #     name='Балерина на стене',
-    #     genre_id=genre_action.id,
-    #     author_id=author1.id,
-    #     duration=time(1, 40)
-    # )
-    # film4 = Film(
-    #     name='Собаки в чемодане',
-    #     genre_id=genre_triller.id,
-    #     author_id=author2.id,
-    #     duration=time(1, 350)
-    # )
-    # db.session.add(film1)
-    # db.session.add(film2)
-    # db.session.add(film3)
-    # db.session.add(film4)
-    # db.session.commit()
-
-
-insert_init_data()

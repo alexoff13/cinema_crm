@@ -1,0 +1,39 @@
+{% from 'bootstrap5/nav.html' import render_nav_item %}
+
+<head>
+    {% block head %}
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    {% block styles %}
+    <!-- Bootstrap CSS -->
+    {{ bootstrap.load_css() }}
+    {% endblock %}
+
+    <title>Cinema CRM</title>
+    {% endblock %}
+</head>
+
+<body>
+    {% block navbars %}
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="navbar-nav mr-auto">
+            {{ render_nav_item('index', 'Home') }}
+            {{ render_nav_item('login', 'Login') }}
+            {{ render_nav_item('view_films', 'Film') }}
+            {{ render_nav_item('view_genres', 'Genre') }}
+            {{ render_nav_item('view_authors', 'Author') }}
+        </div>
+    </nav>
+    {% endblock %}
+    {% block content %}
+
+    {% endblock %}
+    {% block scripts %}
+    <!-- Optional JavaScript -->
+    {{ bootstrap.load_js() }}
+    {% endblock %}
+</body>
+
+</html>

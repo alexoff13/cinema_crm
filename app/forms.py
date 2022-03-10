@@ -1,8 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField, TimeField
 from wtforms.validators import DataRequired
-
-from app.models import Genre
 
 
 # TODO проверка всех значений в формах
@@ -34,9 +32,58 @@ class AddGenreForm(FlaskForm):
 
 class EditGenreForm(FlaskForm):
     """
-    Форма для добавления нового жанра в справочник
+    Форма для редактирования жанра в справочнике
     """
     name = StringField(label='Новое наименование:',
                        validators=[DataRequired('Данное поле обязательно')],
                        render_kw={'placeholder': 'Введите наименование жанра'})
+    submit = SubmitField('Изменить')
+
+
+class AddAuthorForm(FlaskForm):
+    """
+    Форма для добавления нового автора в справочник
+    """
+    name = StringField(label='ФИО:',
+                       validators=[DataRequired('Данное поле обязательно')],
+                       render_kw={'placeholder': 'Введите ФИО автора'})
+    submit = SubmitField('Записать')
+
+
+class EditAuthorForm(FlaskForm):
+    """
+    Форма для редактирования автора в справочнике
+    """
+    name = StringField(label='Новое ФИО:',
+                       validators=[DataRequired('Данное поле обязательно')],
+                       render_kw={'placeholder': 'Введите ФИО автора'})
+    submit = SubmitField('Изменить')
+
+
+class AddFilmForm(FlaskForm):
+    """
+    Форма для добавления нового фильма
+    """
+    name = StringField(label='Название фильма:',
+                       validators=[DataRequired('Данное поле обязательно')],
+                       render_kw={'placeholder': 'Введите название фильма'})
+    genre = SelectField(u'Жанр', coerce=int)
+    author = SelectField(u'Автор', coerce=int)
+    duration = TimeField('Продолжительность',
+                         validators=[DataRequired('Данное поле обязательно')],
+                         render_kw={'placeholder': 'Введите продолжительность фильма'})
+    submit = SubmitField('Записать')
+
+class EditFilmForm(FlaskForm):
+    """
+    Форма для редактирования фильма
+    """
+    name = StringField(label='Название фильма:',
+                       validators=[DataRequired('Данное поле обязательно')],
+                       render_kw={'placeholder': 'Введите название фильма'})
+    genre = SelectField(u'Жанр', coerce=int)
+    author = SelectField(u'Автор', coerce=int)
+    duration = TimeField('Продолжительность',
+                         validators=[DataRequired('Данное поле обязательно')],
+                         render_kw={'placeholder': 'Введите продолжительность фильма'})
     submit = SubmitField('Изменить')

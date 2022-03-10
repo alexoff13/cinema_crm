@@ -3,16 +3,19 @@
 {% extends "base.html" %}
 
 
-{{ render_messages() }}
-
 {% block navbars %} {{ super() }} {% endblock %}
+
+<!-- Your page content -->
 {% block content %}
+{{ render_messages() }}
 <div class="container-fluid">
     <div class="align-items-center justify-content-center row">
         <div class="align-self-center col-6 col-sm-5 col-md-4 mt-5">
             <div class="card">
                 <div class="card-body">
                     {{ render_form(form) }}
+                    <p></p>
+                    <a class="btn btn-primary" href="/genres" role="button">Назад</a>
                 </div>
             </div>
         </div>

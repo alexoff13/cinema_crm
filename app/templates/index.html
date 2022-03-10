@@ -1,34 +1,8 @@
-{% from 'bootstrap5/nav.html' import render_nav_item %}
-<head>
-    {% block head %}
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+{% extends "base.html" %}
 
-    {% block styles %}
-    <!-- Bootstrap CSS -->
-    {{ bootstrap.load_css() }}
-    {% endblock %}
 
-    <title>Cinema CRM</title>
-    {% endblock %}
-</head>
+{% block navbars %} {{ super() }} {% endblock %}
 
-<body>
-    <!-- Your page content -->
-    {% block content %}
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="navbar-nav mr-auto">
-            {{ render_nav_item('index', 'Home') }}
-            {{ render_nav_item('login', 'Login') }}
-            {{ render_nav_item('view_genres', 'Genre') }}
-        </div>
-    </nav>
-    {% endblock %}
-    {% block scripts %}
-    <!-- Optional JavaScript -->
-    {{ bootstrap.load_js() }}
-    {% endblock %}
-</body>
-</html>
-
+{% block content %}
+<h1 class=""display-6">Здесь будет документация по использованию приложения</h1>
+{% endblock %}

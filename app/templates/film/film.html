@@ -1,0 +1,31 @@
+{% from 'bootstrap5/table.html' import render_table %}
+{% extends "base.html" %}
+
+{% block navbars %} {{ super() }} {% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div class="align-items-center justify-content-center row">
+        <div class="align-self-center col-6 col-sm-5 col-md-4 mt-5">
+            <div class="card">
+                <div class="card-body">
+                    {{ 
+                        render_table(
+                            data, 
+
+                            model=Film,
+                            show_actions=True, 
+                            edit_url=(
+                                'edit_film', [('film_id',':id')]
+                            ),
+                            delete_url=(
+                                'delete_film', [('film_id',':id')]
+                            ),
+                            new_url='/films/add'
+                        ) 
+                    }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

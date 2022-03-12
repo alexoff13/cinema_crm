@@ -10,16 +10,17 @@
                     {{ 
                         render_table(
                             data, 
-
-                            model=Film,
+                            primary_key='passport',
+                            primary_key_title='Passport',
+                            model=Staff,
                             show_actions=True, 
                             edit_url=(
-                                'edit_film', [('film_id',':id')]
+                                'edit_staff', [('passport',':passport')]
                             ),
                             delete_url=(
-                                'delete_film', [('film_id',':id')]
+                                'delete_staff', [('passport',':passport')]
                             ),
-                            new_url='/films/add'
+                            new_url='/staff/add'
                         ) 
                     }}
                 </div>

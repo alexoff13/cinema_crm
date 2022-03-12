@@ -10,16 +10,15 @@
                     {{ 
                         render_table(
                             data, 
-
-                            model=Film,
-                            show_actions=True, 
+                            model=Cinemahall,
+                            show_actions=True,
                             edit_url=(
-                                'edit_film', [('film_id',':id')]
+                                'edit_cinemahall', [('cinemahall_id',':id')]
                             ),
                             delete_url=(
-                                'delete_film', [('film_id',':id')]
+                                'delete_cinemahall', [('cinemahall_id',':id')]
                             ),
-                            new_url='/films/add'
+                            new_url='/cinemahall/add'
                         ) 
                     }}
                 </div>

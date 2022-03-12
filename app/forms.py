@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField, TimeField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField, TimeField, IntegerField
 from wtforms.validators import DataRequired
 
 
@@ -74,6 +74,7 @@ class AddFilmForm(FlaskForm):
                          render_kw={'placeholder': 'Введите продолжительность фильма'})
     submit = SubmitField('Записать')
 
+
 class EditFilmForm(FlaskForm):
     """
     Форма для редактирования фильма
@@ -87,3 +88,39 @@ class EditFilmForm(FlaskForm):
                          validators=[DataRequired('Данное поле обязательно')],
                          render_kw={'placeholder': 'Введите продолжительность фильма'})
     submit = SubmitField('Изменить')
+
+
+class StaffForm(FlaskForm):
+    """ 
+    Форма для добавления/изменения сотрудника
+    """
+    passport = StringField(label='Серия и номер паспорта:',
+                           validators=[DataRequired(
+                               'Данное поле обязательно')],
+                           render_kw={'placeholder': 'Введите данные'})
+    name = StringField(label='ФИО:',
+                       validators=[DataRequired('Данное поле обязательно')],
+                       render_kw={'placeholder': 'Введите ФИО'})
+    post = SelectField(u'Должность', coerce=int)
+    login = StringField(label='Логин:',
+                        validators=[DataRequired('Данное поле обязательно')],
+                        render_kw={'placeholder': 'Введите логин'})
+    password = StringField(label='Пароль:',
+                           validators=[DataRequired(
+                               'Данное поле обязательно')],
+                           render_kw={'placeholder': 'Введите пароль'})
+    submit = SubmitField('Записать')
+
+
+class CinemahallForm(FlaskForm):
+    """ 
+    Форма для добавления/изменения кинозала
+    """
+    name = StringField(label='Наименование:',
+                       validators=[DataRequired('Данное поле обязательно')],
+                       render_kw={'placeholder': 'Введите наименование'})
+    capacity = IntegerField(label='Вместимость:',
+                            validators=[DataRequired(
+                                'Данное поле обязательно')],
+                            render_kw={'placeholder': 'Введите вместимость'})
+    submit = SubmitField('Записать')

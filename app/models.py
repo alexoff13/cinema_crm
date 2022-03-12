@@ -2,11 +2,6 @@
 from datetime import time
 from app import db
 
-# ебучие релайтион шип с back_populates прописываются в двух ебанных классах
-# ссылка на ответ умного чеоловека
-# https://coderoad.ru/39869793/Когда-мне-нужно-использовать-sqlalchemy-back_populates
-# пока закомментил связи, потому что не вижу разницы
-
 
 class Film(db.Model):
     """ 
@@ -41,6 +36,32 @@ class Film(db.Model):
         self.id_genre = id_genre
         self.id_author = id_author
         self.duration = duration
+
+
+class FilmView(db.Model):
+    """ 
+    Класс для маппинга представления фильмов из БД.
+    DDL содержится в переменной __ddl
+    """
+    __tablename__ = 'film_view'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String)
+    genre_name = db.Column(db.String)
+    author_name = db.Column(db.String)
+    duration = db.Column(db.Time)
+
+    __ddl = """
+    CREATE OR REPLACE VIEW public.film_view
+    AS SELECT f.id,
+        f.name,
+        g.name AS genre_name,
+        a.name AS author_name,
+        f.duration
+   FROM film f
+        JOIN genre g ON g.id = f.id_genre
+        JOIN author a ON a.id = f.id_author;
+    """
 
 
 class Genre(db.Model):
@@ -117,9 +138,10 @@ class Cinemahall(db.Model):
         comment='Название'
     )
     capacity = db.Column(db.Integer, comment='Вместимость')
-    # sessions = db.relationship(
-    #     'FilmSession',
-    #     back_populates='cinemahall')
+
+    def __init__(self, name: str, capacity: int) -> None:
+        self.name = name
+        self.capacity = capacity
 
 
 class Ticket(db.Model):
@@ -161,8 +183,6 @@ class Staff(db.Model):
         db.ForeignKey('post.id'),
         comment='id дожности'
     )
-    # tickets = db.relationship('Ticket', back_populates='staff')
-    # post = db.relationship('Post', back_populates='staff', uselist=False)
 
     def __init__(self, passport, name, post_id, login, password) -> None:
         self.passport = passport
@@ -182,6 +202,15 @@ class Staff(db.Model):
 
     def get_id(self):
         return int(self.passport)
+
+
+class StaffView(db.Model):
+    __tablename__ = 'staff_view'
+    passport = db.Column(db.String, primary_key=True)
+    name = db.Column(db.String)
+    login = db.Column(db.String)
+    password = db.Column(db.String)
+    post = db.Column(db.String)
 
 
 class Post(db.Model):

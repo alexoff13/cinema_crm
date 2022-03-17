@@ -1,6 +1,8 @@
 
 from datetime import time
+from zoneinfo import available_timezones
 from app import db
+from flask_login import UserMixin
 
 
 class Film(db.Model):
@@ -115,10 +117,18 @@ class FilmSession(db.Model):
         db.ForeignKey('cinemahall.name'),
         comment='Наименование кинозала'
     )
-    # film = db.relationship('Film', back_populates='sessions', uselist=False)
-    # tickets = db.relationship('Ticket', back_populates='session_film')
-    # cinemahall = db.relationship(
-    #     'Cinemahall', back_populates='sessions', uselist=False)
+
+
+class SheduleSession(db.Model):
+    """ 
+    Таблица с расписанием фильмов (для кассиров и покупателей)
+    """
+    __tablename__ = 'film_session_view'
+    id = db.Column(db.Integer, primary_key=True)
+    date_time = db.Column(db.DateTime)
+    name_film = db.Column(db.String)
+    name_cinemahall = db.Column(db.String)
+    available_tickets = db.Column(db.Integer)
 
 
 class Cinemahall(db.Model):
@@ -160,12 +170,20 @@ class Ticket(db.Model):
         db.ForeignKey('staff.passport'),
         comment='Подпись кассира'
     )
-    # session_film = db.relationship(
-    #     'FilmSession', back_populates='tickets', uselist=False)
-    # staff = db.relationship('Staff', back_populates='tickets', uselist=False)
+
+    def __init__(self, id_session, signature_cashier) -> None:
+        self.id_session = id_session
+        self.signature_cashier = signature_cashier
 
 
-class Staff(db.Model):
+class CashierTicket(db.Model):
+    __tablename__ = 'cashier_ticket'
+    passport = db.Column(db.String, primary_key=True)
+    name = db.Column(db.String)
+    count_sell = db.Column(db.Integer)
+
+
+class Staff(UserMixin, db.Model):
     """ 
     Таблица с сотрудниками
     """
@@ -191,21 +209,13 @@ class Staff(db.Model):
         self.login = login
         self.password = password
 
-    def is_authenticated(self):
-        return True
-
-    def is_active(self):
-        return True
-
-    def is_anonymous(self):
-        return False
-
     def get_id(self):
         return int(self.passport)
 
 
 class StaffView(db.Model):
     __tablename__ = 'staff_view'
+
     passport = db.Column(db.String, primary_key=True)
     name = db.Column(db.String)
     login = db.Column(db.String)
@@ -221,7 +231,6 @@ class Post(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, comment='Наименование')
-    # staff = db.relationship('Staff', back_populates='post')
 
     def __init__(self, name) -> None:
         self.name = name

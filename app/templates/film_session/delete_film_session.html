@@ -1,7 +1,7 @@
-{% from 'bootstrap5/form.html' import render_form %}
 {% from 'bootstrap5/utils.html' import render_messages %}
 {% set post = user_post %}
 {% extends "base.html" %}
+
 
 {% block navbars %} {{ super() }} {% endblock %}
 
@@ -12,10 +12,9 @@
         <div class="align-self-center col-6 col-sm-5 col-md-4 mt-5">
             <div class="card">
                 <div class="card-body">
-                    <h3 class="display-6">Старое наименование: {{old_name}}</h3>
-                    {{ render_form(form) }}
+                    <h3 class="display-6">Сеанс {{name}} успешно удален!</h3>
                     <p></p>
-                    <a class="btn btn-primary" href="/genres" role="button">Назад</a>
+                    <a class="btn btn-primary" href="/film_session" role="button">Назад</a>
                 </div>
             </div>
         </div>

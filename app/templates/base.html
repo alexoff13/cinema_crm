@@ -17,15 +17,36 @@
 
 <body>
     {% block navbars %}
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="navbar-nav mr-auto">
-            {{ render_nav_item('index', 'Home') }}
-            {{ render_nav_item('login', 'Login') }}
+        {{ render_nav_item('index', 'Home') }}
+        {{ render_nav_item('login', 'Login') }}
+
+        {% if post == 1 %}
+            {{ render_nav_item('view_film_shedule', 'SheduleSession') }}
+            {{ render_nav_item('logout', 'Logout') }}
+            <a class="nav-item nav-link  disabled" href="#">
+                CASHIER 
+            </a>
+        {% elif post == 2 %}
+            {{ render_nav_item('view_film_session', 'Film Session') }}
             {{ render_nav_item('view_films', 'Film') }}
             {{ render_nav_item('view_genres', 'Genre') }}
             {{ render_nav_item('view_authors', 'Author') }}
             {{ render_nav_item('view_cinemahall', 'Cinemahall') }}
             {{ render_nav_item('view_staff', 'Staff') }}
+            {{ render_nav_item('view_cashier_ticket', 'CashiersSells') }}
+            {{ render_nav_item('logout', 'Logout') }}
+            <a class="nav-item nav-link  disabled" href="#">
+                MANAGER 
+            </a>
+        {%else %}
+            {{ render_nav_item('view_film_shedule', 'SheduleSession') }}
+            {{ render_nav_item('logout', 'Logout') }}
+            <a class="nav-item nav-link  disabled" href="#">
+                USER 
+            </a>
+        {% endif %}
         </div>
     </nav>
     {% endblock %}

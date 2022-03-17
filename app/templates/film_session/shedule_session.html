@@ -1,0 +1,37 @@
+{% from 'bootstrap5/table.html' import render_table %}
+{% set post = user_post %}
+{% extends "base.html" %}
+
+{% block navbars %} {{ super() }} {% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div class="align-items-center justify-content-center row">
+            <div class="card">
+                <div class="card-body">
+                    {{ 
+                        render_table(
+                            data, 
+                            model=SheduleSession,
+                            show_actions=need_show,
+                            custom_actions=[
+                            (
+                                'Buy',
+                                'currency-dollar',
+                                (
+                                    'sell_ticket', 
+                                    [
+                                        (
+                                            'id_session',
+                                             ':id'
+                                        )
+                                    ]
+                                )
+                            )]
+                        ) 
+                    }}
+                </div>
+            </div>
+    </div>
+</div>
+{% endblock %}
+currency-dollar

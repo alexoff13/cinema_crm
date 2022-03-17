@@ -1,0 +1,8 @@
+{% set post = user_post %}
+{% extends "base.html" %}
+
+{% block content %}
+<div>
+    <p class="display-6">Билет на фильм {{film_name}} на {{date_time}} успешно продан кассиром {{cashier_name}}</p>
+</div>
+{% endblock %}

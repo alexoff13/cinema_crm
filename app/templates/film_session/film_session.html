@@ -11,15 +11,15 @@
                     {{ 
                         render_table(
                             data, 
-                            model=Author,
-                            show_actions=True, 
+                            model=FilmSession,
+                            show_actions=True,
                             edit_url=(
-                                'edit_author', [('author_id',':id')]
+                                'edit_film_session', [('film_session_id',':id')]
                             ),
                             delete_url=(
-                                'delete_author', [('author_id',':id')]
+                                'delete_film_session', [('film_session_id',':id')]
                             ),
-                            new_url='/authors/add'
+                            new_url='/film_session/add'
                         ) 
                     }}
                 </div>

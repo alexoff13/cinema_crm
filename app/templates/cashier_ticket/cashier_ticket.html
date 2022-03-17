@@ -11,16 +11,10 @@
                     {{ 
                         render_table(
                             data, 
-                            model=Author,
-                            show_actions=True, 
-                            edit_url=(
-                                'edit_author', [('author_id',':id')]
-                            ),
-                            delete_url=(
-                                'delete_author', [('author_id',':id')]
-                            ),
-                            new_url='/authors/add'
-                        ) 
+                            primary_key='passport',
+                            primary_key_title='Passport',
+                            model=CashierTicket
+                        )
                     }}
                 </div>
             </div>

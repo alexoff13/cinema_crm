@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField, TimeField, IntegerField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField, TimeField, IntegerField, DateTimeLocalField
 from wtforms.validators import DataRequired
 
 
@@ -123,4 +123,19 @@ class CinemahallForm(FlaskForm):
                             validators=[DataRequired(
                                 'Данное поле обязательно')],
                             render_kw={'placeholder': 'Введите вместимость'})
+    submit = SubmitField('Записать')
+
+
+class FilmSessionForm(FlaskForm):
+    """ 
+    Форма для добавления/изменения сеанса
+    """
+    date_time = DateTimeLocalField(label='Дата и время:',
+                                   format='%Y-%m-%dT%H:%M',
+                                   validators=[DataRequired(
+                                       'Данное поле обязательно')],
+                                   render_kw={'placeholder': 'Введите дату и время'})
+    name_film = SelectField(u'Название фильма')
+    name_cinemahall = SelectField(u'Название кинозала')
+
     submit = SubmitField('Записать')

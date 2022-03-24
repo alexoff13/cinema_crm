@@ -4,7 +4,7 @@ from app import db
 
 
 def insert_init_data():
-    db.drop_all()
+    # db.drop_all()
     db.create_all()
     session = db.session
     # должности
@@ -111,6 +111,66 @@ def insert_init_data():
     session.add(film4)
     session.commit()
 
+    db.engine.execute("""
+    DROP TABLE IF EXISTS public.cashier_ticket
+    """)
+    db.engine.execute("""
+    DROP TABLE IF EXISTS public.film_session_view
+    """)
+    db.engine.execute("""
+    DROP TABLE IF EXISTS public.film_view
+    """)
+    db.engine.execute("""
+    DROP TABLE IF EXISTS public.staff_view
+    """)
+    db.engine.execute("""
+    CREATE OR REPLACE VIEW public.cashier_ticket
+    AS SELECT s.passport,
+        s.name,
+        count(t.id) AS count_sell
+    FROM staff s
+        JOIN ticket t ON s.passport::text = t.signature_cashier::text
+    WHERE s.post_id = 1
+    GROUP BY s.passport, s.name;
+    """)
 
-if __name__ == 'main':
+    db.engine.execute("""
+    CREATE OR REPLACE VIEW public.film_session_view
+    AS SELECT s.id,
+        s.date_time,
+        s.name_film,
+        s.name_cinemahall,
+        c.capacity - count(t.id) AS available_tickets
+    FROM session_film s
+        LEFT JOIN ticket t ON s.id = t.id_session
+        JOIN cinemahall c ON c.name::text = s.name_cinemahall::text
+    GROUP BY s.id, s.date_time, s.name_film, s.name_cinemahall, c.capacity;
+    """)
+    db.engine.execute("""
+    CREATE OR REPLACE VIEW public.film_view
+    AS SELECT f.id,
+        f.name,
+        g.name AS genre_name,
+        a.name AS author_name,
+        f.duration
+    FROM film f
+        JOIN genre g ON g.id = f.id_genre
+        JOIN author a ON a.id = f.id_author;
+    """)
+    db.engine.execute("""
+    CREATE OR REPLACE VIEW public.staff_view
+    AS SELECT s.passport,
+        s.name,
+        s.login,
+        s.password,
+        p.name AS post
+    FROM staff s
+        JOIN post p ON s.post_id = p.id;
+    """)
+
+
+db.create_all()
+if len(Post.query.all()) < 2:
     insert_init_data()
+else:
+    pass

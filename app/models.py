@@ -19,12 +19,12 @@ class Film(db.Model):
     name = db.Column(db.String, comment='Название')
     id_genre = db.Column(
         db.Integer,
-        db.ForeignKey('genre.id'),
+        db.ForeignKey('genre.id',onupdate="CASCADE", ondelete="CASCADE"),
         comment='id жанра'
     )
     id_author = db.Column(
         db.Integer,
-        db.ForeignKey('author.id'),
+        db.ForeignKey('author.id',onupdate="CASCADE", ondelete="CASCADE"),
         comment='id режиссера'
     )
     duration = db.Column(db.Time, comment='Продолжительность')
@@ -109,12 +109,12 @@ class FilmSession(db.Model):
     )
     name_film = db.Column(
         db.String,
-        db.ForeignKey('film.name'),
+        db.ForeignKey('film.name',onupdate="CASCADE", ondelete="CASCADE"),
         comment='Название фильма'
     )
     name_cinemahall = db.Column(
         db.String,
-        db.ForeignKey('cinemahall.name'),
+        db.ForeignKey('cinemahall.name',onupdate="CASCADE",ondelete="CASCADE"),
         comment='Наименование кинозала'
     )
 
@@ -162,12 +162,12 @@ class Ticket(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     id_session = db.Column(
         db.Integer,
-        db.ForeignKey('session_film.id'),
+        db.ForeignKey('session_film.id',onupdate="CASCADE", ondelete="CASCADE"),
         comment='id сеанса'
     )
     signature_cashier = db.Column(
         db.String,
-        db.ForeignKey('staff.passport'),
+        db.ForeignKey('staff.passport',onupdate="CASCADE", ondelete="CASCADE"),
         comment='Подпись кассира'
     )
 
@@ -198,7 +198,7 @@ class Staff(UserMixin, db.Model):
     password = db.Column(db.String)
     post_id = db.Column(
         db.Integer,
-        db.ForeignKey('post.id'),
+        db.ForeignKey('post.id',onupdate="CASCADE", ondelete="CASCADE"),
         comment='id дожности'
     )
 

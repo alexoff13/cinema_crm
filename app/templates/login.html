@@ -4,10 +4,11 @@
 {% extends "base.html" %}
 
 
-{{ render_messages() }}
+
 
 {% block navbars %} {{ super() }} {% endblock %}
 {% block content %}
+{{ render_messages() }}
 <div class="container-fluid">
     <div class="align-items-center justify-content-center row">
         <div class="align-self-center col-6 col-sm-5 col-md-4 mt-5">

@@ -154,17 +154,12 @@ def edit_cinemahall(cinemahall_id: int):
     cinemahall_change: Cinemahall = Cinemahall.query.filter_by(
         id=cinemahall_id).first()
     form = CinemahallForm()
-    form.name.default = cinemahall_change.name
-    form.capacity.default = cinemahall_change.capacity
-    form.submit.label.text = 'Изменить'
-
-    form.process()
 
     if form.validate_on_submit():
         name = request.form.get('name', '', type=str)
         capacity = request.form.get('capacity', '', type=int)
         cinemahall = Cinemahall.query.filter_by(name=name).first()
-        if cinemahall:
+        if cinemahall and capacity == cinemahall.capacity:
             flash('Данный кинозал уже есть в БД! Данные не записаны')
         else:
             cinemahall_change.name = name
@@ -172,6 +167,12 @@ def edit_cinemahall(cinemahall_id: int):
             db.session.add(cinemahall_change)
             db.session.commit()
             flash('Кинозал успешно изменен!')
+
+    form.name.default = cinemahall_change.name
+    form.capacity.default = cinemahall_change.capacity
+    form.submit.label.text = 'Изменить'
+
+    form.process()
     return render_template('cinemahall/edit_cinemahall.html', form=form, user_post=get_post_for_user())
 
 
@@ -207,7 +208,6 @@ def add_film_session():
         name_cinemahall = request.form.get('name_cinemahall', '', type=str)
         date_time = datetime.strptime(request.form.get(
             'date_time', '', type=str), '%Y-%m-%dT%H:%M')
-        a = 1
 
         film_session = FilmSession.query.filter_by(
             date_time=date_time, name_cinemahall=name_cinemahall).first()
@@ -216,9 +216,11 @@ def add_film_session():
         if film_session:
             flash(
                 f'В кинозале {name_cinemahall} на {str(date_time)} уже есть сеанс! Данные не записаны')
-        elif conflict_sessions.count > 0:
+        elif len(conflict_sessions) > 0:
             flash(
-                f'В кинозале {name_cinemahall} с {check_session_time[0][1]} по {check_session_time[0][2]} проходит сеанс! Данные не записаны')
+                f'В кинозале {name_cinemahall} с {conflict_sessions[0][1]} по {conflict_sessions[0][2]} проходит сеанс! Данные не записаны')
+        elif date_time <= datetime.now():
+            flash('Дата должна быть больше текущего времени!')
         else:
             film_session = FilmSession(
                 date_time=date_time,
@@ -240,12 +242,6 @@ def edit_film_session(film_session_id: int):
     form.name_film.choices = [(g.name, g.name) for g in Film.query.all()]
     form.name_cinemahall.choices = [(g.name, g.name)
                                     for g in Cinemahall.query.all()]
-    form.name_film.default = film_session_change.name_film
-    form.name_cinemahall.default = film_session_change.name_cinemahall
-    form.date_time.default = film_session_change.date_time
-    form.submit.label.text = 'Изменить'
-
-    form.process()
 
     if form.validate_on_submit():
         name_film = request.form.get('name_film', '', type=str)
@@ -270,6 +266,14 @@ def edit_film_session(film_session_id: int):
             db.session.add(film_session_change)
             db.session.commit()
             flash('Сеанс успешно изменен!')
+
+    form.name_film.default = film_session_change.name_film
+    form.name_cinemahall.default = film_session_change.name_cinemahall
+    form.date_time.default = film_session_change.date_time
+    form.submit.label.text = 'Изменить'
+
+    form.process()
+
     return render_template('film_session/edit_film_session.html', form=form, user_post=get_post_for_user())
 
 
@@ -295,28 +299,21 @@ def edit_film(film_id: int):
     """Функция для редактирования фильмов"""
     film_change: Film = Film.query.filter_by(id=film_id).first()
     form = EditFilmForm()
-    # ставим в форму предыдущие значения элемента
-    form.name.default = film_change.name
     form.genre.choices = [(g.id, g.name)
                           for g in Genre.query.order_by('name')]
-    form.genre.default = film_change.id_genre
     form.author.choices = [(g.id, g.name)
                            for g in Author.query.order_by('name')]
-    form.author.default = film_change.id_author
-    form.duration.default = film_change.duration
-    # обработка формы, без этого значения не подставятся
-    form.process()
     if form.validate_on_submit():
         film_name = request.form.get('name', '', type=str)
         genre_id = request.form.get('genre', '', type=int)
         author_id = request.form.get('author', '', type=int)
         duration_str = request.form.get('duration', '', type=str)
-        print(duration_str[0:2])
-        print(duration_str[3:5])
         duration = time(int(duration_str[0:2]), int(duration_str[3:5]))
         film = Film.query.filter_by(name=film_name).first()
         if film and film.name != film_change.name:
             flash('Данный фильм уже есть в БД! Данные не записаны')
+        elif not (time(0, 30) < duration < time(5, 0)):
+            flash('Продолжительность фильма должна быть от 30 минут до 5 часов')
         else:
             film_change.name = film_name
             film_change.id_author = author_id
@@ -325,6 +322,15 @@ def edit_film(film_id: int):
             db.session.add(film_change)
             db.session.commit()
             flash('Фильм успешно изменен!')
+        # ставим в форму предыдущие значения элемента
+    form.name.default = film_change.name
+
+    form.genre.default = film_change.id_genre
+
+    form.author.default = film_change.id_author
+    form.duration.default = film_change.duration
+    # обработка формы, без этого значения не подставятся
+    form.process()
     return render_template('film/edit_film.html', form=form, old_name=film_change.name, user_post=get_post_for_user())
 
 
@@ -461,19 +467,8 @@ def edit_staff(passport: str):
     """Функция для редактирования сотрудника"""
     staff_change: Staff = Staff.query.filter_by(passport=passport).first()
     form = StaffForm()
-    # ставим в форму предыдущие значения элемента
-    form.name.default = staff_change.name
     form.post.choices = [(g.id, g.name)
                          for g in Post.query.order_by('name')]
-    form.post.default = staff_change.post_id
-
-    form.login.default = staff_change.login
-    form.passport.default = staff_change.passport
-    form.password.default = staff_change.password
-
-    form.submit.label.text = 'Изменить'
-    # обработка формы, без этого значения не подставятся
-    form.process()
 
     if form.validate_on_submit():
         passport = request.form.get('passport', '', type=str)
@@ -483,8 +478,11 @@ def edit_staff(passport: str):
         password = request.form.get('password', '', type=str)
 
         staff: Staff = Staff.query.filter_by(passport=passport).first()
+        staff1:Staff = Staff.query.filter_by(login=login).first()
         if staff and staff.passport != staff_change.passport:
             flash('Данный сотрудник уже есть в БД! Данные не записаны')
+        if staff1 and staff1.login != staff_change.login:
+            flash('Сотрудник с данным логином уже есть в БД! Данные не записаны')
         else:
             staff_change.name = name
             staff_change.post_id = post_id
@@ -494,6 +492,18 @@ def edit_staff(passport: str):
             db.session.add(staff_change)
             db.session.commit()
             flash('Сотрудник успешно изменен!')
+
+    # ставим в форму предыдущие значения элемента
+    form.name.default = staff_change.name
+
+    form.post.default = staff_change.post_id
+
+    form.login.default = staff_change.login
+    form.passport.default = staff_change.passport
+    form.password.default = staff_change.password
+    form.submit.label.text = 'Изменить'
+    # обработка формы, без этого значения не подставятся
+    form.process()
     return render_template('staff/edit_staff.html', form=form, user_post=get_post_for_user())
 
 
@@ -523,7 +533,9 @@ def view_film_shedule():
 
 @app.route('/film_shedule/sell/<int:id_session>', methods=['GET', 'POST'])
 def sell_ticket(id_session):
-    if current_user.post_id != 1:
+    session: SheduleSession = SheduleSession.query.filter_by(
+        id=id_session).first()
+    if (current_user.post_id != 1) or (session.available_tickets < 1):
         return render_template('ticket/ticket_error.html', user_post=get_post_for_user())
     ticket = Ticket(
         id_session=id_session,

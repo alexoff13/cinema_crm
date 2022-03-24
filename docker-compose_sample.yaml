@@ -1,0 +1,25 @@
+version: '3.3'
+services:
+    cinema_crm:
+        container_name: cinema_app
+        build: .
+        volumes:
+          - ./app:/app
+        ports:
+          - "8050:8050"
+        restart: always
+        depends_on:
+         - cinema_db
+
+    cinema_db:
+      container_name: cinema_db
+      image: postgres:13.5
+      environment:
+          - POSTGRES_USER=
+          - POSTGRES_PASSWORD=
+          - POSTGRES_DB=cinema
+          - PGDATA=/data/postgres
+      volumes:
+        - postgres=/data/postgres
+      ports:
+        - "5432:5432"

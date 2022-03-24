@@ -10,7 +10,7 @@ def check_session_time(name_cinemahall: str, date_time: datetime) -> list:
     check_sessions = db.engine.execute(
         f"""
         select
-            s.name_film              as film_name
+            s.name_film               as film_name
             ,s.date_time              as start
             ,s.date_time + f.duration as end
         from

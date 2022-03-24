@@ -8,7 +8,7 @@ class Config(object):
 	"""
 	DEBUG = False
 	TESTING = False
-	SQLALCHEMY_DATABASE_URI = f'postgresql://{os.environ["POSTGRESS_USER"]}:{os.environ["POSTGRESS_PASS"]}@localhost:5432/cinema'
+	SQLALCHEMY_DATABASE_URI = f'postgresql://{os.environ["POSTGRESS_USER"]}:{os.environ["POSTGRESS_PASS"]}@{os.environ["POSTGRESS_HOST"]}:5432/cinema'
 	BOOTSTRAP_FONTAWESOME = True
 	SECRET_KEY = "2x$e%!k_u_0*gq0s4!_u(2(^lpy&gir0hg)q&5nurj0-sseuav"
 	CSRF_ENABLED = True
